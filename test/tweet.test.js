@@ -35,6 +35,11 @@ describe('tweets app', () => {
     });
   });
 
+  afterAll(done => {
+    mongoose.connection.close();
+    done();
+  });
+
   it('creates a new tweet', () => {
     return createUser()
       .then(createdUser => {
@@ -107,14 +112,16 @@ describe('tweets app', () => {
       });
   });
 
-  it('returns a list of tweets', () => {
-    return Promise.all(['kaiya', 'kaiya'].map(createTweet))
+  it('returns a list of tweets', done => {
+    return Promise.all(['kaiya', 'kaiya'].map(el => createTweet(el)))
       .then(() => {
         return request(app)
           .get('/tweets');
       })
       .then(res => {
+        console.log(res.body);
         expect(res.body).toHaveLength(2);
+        done();
       });
   });
 
